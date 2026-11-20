@@ -63,7 +63,9 @@ A package fits when all of these hold:
 - The need is more than a few lines. For a ten-line helper (a rubber-band
   formula, a hex initializer), copying it under
   `// from <project> <URL>` is lighter than a dependency, unless the project
-  already has the package.
+  already has the package. Read the source's license first and carry what it
+  requires (Apache-2.0 packages such as `swift-rubber-banding` need the
+  license and `NOTICE` text kept with the copy).
 
 ## The Catalog
 
@@ -103,9 +105,14 @@ entry point, floor, and caveats.
 - Depend on the smallest product that covers the need
   (`.product(name: "ScrollTracking", package: "swiftui-list-support")`, not
   every module).
-- Use `from:` with the latest release tag. Packages marked **untagged** have
-  no release; pin a revision and say so, because `branch: "main"` changes
-  under the app.
+- Use `from:` with the latest release tag that resolves with the project's
+  other dependencies. A package may pin its own dependencies exactly
+  (`Brightroom` pins `swift-state-graph`); resolve the graph before reporting
+  the adoption as done, and report a conflict instead of forcing it.
+- Packages marked **untagged** have no release. In an app target, pin a
+  revision and say so, because `branch: "main"` changes under the app. A
+  package that is itself consumed by version cannot depend on a revision or
+  branch; there, ask for a tagged release or copy the fragment instead.
 - Follow the README's example for the first use and keep the app's code at
   the call site thin. Do not wrap the component in an app-specific
   abstraction until a second use needs one.

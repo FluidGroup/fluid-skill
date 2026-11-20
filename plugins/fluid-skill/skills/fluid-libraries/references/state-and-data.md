@@ -40,7 +40,7 @@ Verge app to StateGraph as a side effect of another task.
 | --- | --- | --- | --- | --- |
 | User-triggered async work grouped by key, where a new request either cancels the running one or queues behind it (search-as-you-type, a save button tapped twice) | `swift-concurrency-task-manager` | `ConcurrencyTaskManager`: `TaskManager`, `task(key:mode:)` with `.dropCurrent` or `.waitInCurrent` | iOS 16 | `.task(id:)` is enough when the work belongs to one view's lifetime |
 | A hard time limit on an awaited operation that continues even if the operation ignores cancellation | `swift-async-timeout` (FluidGroup) | `swift-async-timeout`: `withTimeout(_:)` | iOS 13 | |
-| User-initiated work that should keep running after the app enters the background | `swift-continued-background-task` (FluidGroup) | `ContinuedTaskManager`: `ContinuedTaskManager`, `submit(title:subtitle:)`, `Job` | iOS 17, macOS 14 | Wraps `BGContinuedProcessingTask` on iOS 26 and runs as an ordinary task elsewhere, so call sites need no availability branch. Follow its README for the Info.plist identifiers |
+| User-initiated work that should keep running after the app enters the background | `swift-continued-background-task` (FluidGroup) | `ContinuedTaskManager`: `ContinuedTaskManager`, `submit(title:subtitle:)`, `Job` | iOS 17, macOS 14 | Wraps `BGContinuedProcessingTask` on iOS 26 and runs as an ordinary task elsewhere or when the system rejects the request, so call sites need no availability branch but continuation is not guaranteed; the work must tolerate suspension. Follow its README for the Info.plist identifiers |
 
 Confirm the mode names against the package before writing a call; the policy
 for overlapping work is the decision that matters, and it should be visible at

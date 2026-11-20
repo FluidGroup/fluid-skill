@@ -38,8 +38,8 @@ where a knob is the wrong control.
 | Need | Package | Product and entry point | Floor | Notes |
 | --- | --- | --- | --- | --- |
 | A SwiftUI stack with custom and contextual (zoom from a cell) transitions | `swiftui-stack` | `SwiftUIStack`: `Stack`, `StackLink`, `StackUnwindLink` | iOS 14 | Check `NavigationStack` with `navigationTransition(.zoom)` first (iOS 18) |
-| A UIKit app whose screens stack with interactive, interruptible custom transitions instead of `UINavigationController` and modal presentation | `FluidInterfaceKit` | `FluidStack`: `FluidStackController`, `FluidViewController`, `fluidPush`, `fluidPop` | iOS 17 | Replaces system navigation for the whole app, giving up the back-button history menu, page sheets, and some accessibility behavior. An architecture decision for the user, not a component to drop in |
-| Floating UIKit surfaces: snackbars, tooltips, picture-in-picture, keyboard tracking | `FluidInterfaceKit` | `FluidSnackbar`, `FluidTooltipSupport`, `FluidPictureInPicture`, `FluidKeyboardSupport` | iOS 17 | Each is a separate product |
+| A UIKit app whose screens stack with interactive, interruptible custom transitions instead of `UINavigationController` and modal presentation | `FluidInterfaceKit` | `FluidStack`: `FluidStackController`, `FluidViewController`, `fluidPush`, `fluidPop` | iOS 17 | **Private API** through `FluidPortal`, which contextual transitions use. Replaces system navigation for the whole app, giving up the back-button history menu, page sheets, and some accessibility behavior. An architecture decision for the user, not a component to drop in |
+| Floating UIKit surfaces: snackbars, tooltips, picture-in-picture, keyboard tracking | `FluidInterfaceKit` | `FluidSnackbar`, `FluidTooltipSupport`, `FluidPictureInPicture`, `FluidKeyboardSupport` | iOS 17 | Each is a separate product. `FluidTooltipSupport` depends on `FluidPortal` (**private API**) |
 
 Standard navigation is the default. Recommend these only when the requirement
 names a transition or stacking behavior the system container cannot produce.
