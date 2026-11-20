@@ -1,0 +1,20 @@
+{
+  "name": "fluid-skill",
+  "interface": {
+    "displayName": "fluid-skill"
+  },
+  "plugins": [
+    {
+      "name": "fluid-skill",
+      "source": {
+        "source": "local",
+        "path": "./plugins/fluid-skill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    }
+  ]
+}

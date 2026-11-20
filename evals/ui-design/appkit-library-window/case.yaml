@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: appkit-library-window
+expected_outcome: |
+  An AppKit main window for a recordings library, delivered as code with a short design sheet. It
+  behaves like a Mac app: a split view with a sidebar and a list, a toolbar, every command in the
+  menu bar with a keyboard shortcut, a resizable window with a minimum size and a remembered
+  frame, keyboard navigation, semantic colours and system fonts, one primary action, one decided
+  layout, and a report that says what was and was not built or run.

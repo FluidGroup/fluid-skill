@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coding Style"
+  short_description: "Language-neutral code shape, ownership, and documentation"
+  default_prompt: "Use $coding-aesthetics to review this task."

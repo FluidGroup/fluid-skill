@@ -1,0 +1,35 @@
+{
+  "name": "fluid-skill",
+  "owner": {
+    "name": "FluidGroup"
+  },
+  "metadata": {
+    "description": "FluidGroup skill marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "fluid-skill",
+      "source": "./plugins/fluid-skill",
+      "description": "Apple-platform UI design, coding style and long-term maintainability: Swift, UIKit, AppKit and web UI preferences",
+      "author": {
+        "name": "FluidGroup"
+      },
+      "category": "development",
+      "keywords": [
+        "coding-style",
+        "swift",
+        "swiftui",
+        "uikit",
+        "appkit",
+        "ui-design",
+        "ios",
+        "macos",
+        "web",
+        "api-design",
+        "code-review",
+        "maintainability"
+      ]
+    }
+  ]
+}

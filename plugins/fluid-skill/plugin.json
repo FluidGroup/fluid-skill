@@ -1,0 +1,24 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fluid-skill",
+  "version": "1.0.0",
+  "description": "Apple-platform UI design, coding style and long-term maintainability: Swift, UIKit, AppKit and web UI preferences",
+  "author": {
+    "name": "FluidGroup"
+  },
+  "repository": "https://github.com/FluidGroup/fluid-skill",
+  "keywords": [
+    "coding-style",
+    "swift",
+    "swiftui",
+    "uikit",
+    "appkit",
+    "ui-design",
+    "ios",
+    "macos",
+    "web",
+    "api-design",
+    "code-review",
+    "maintainability"
+  ]
+}

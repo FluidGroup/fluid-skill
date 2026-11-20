@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: uikit-mini-player-component
+expected_outcome: |
+  One UIKit file with a mini player that expands to a full player by tap or drag, as a component
+  and not a full process run. The motion is specified by a short state sketch that includes
+  interruption; the drag follows the finger and hands its velocity to a spring; nothing locks
+  input during the animation; there is a non-gesture route and an accessibility route; text
+  follows Dynamic Type and colours are semantic; Reduce Motion is respected; and the reply states
+  what was and was not compiled or run.

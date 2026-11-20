@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift & Apple Coding Style"
+  short_description: "Swift code shape, SwiftUI and UIKit components, and packages"
+  default_prompt: "Use $ios-coding-aesthetics with $coding-aesthetics to apply the coding preferences and design judgment to this Swift task."

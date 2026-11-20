@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: swiftui-exploration-full-loop
+expected_outcome: |
+  A SwiftUI prototype of a sample scene selection screen for iPhone plus a design sheet. The work
+  follows the full loop: a stated One Thing and single primary action, a structure that uses the
+  platform's navigation idiom, a constraint sheet built on system text styles, semantic colours
+  and named springs whose values the code uses, many legal layout variations produced by
+  enumeration or seeded sampling and shown together on a contact sheet for the human to choose
+  (none chosen by the agent), an interruptible prototype on system scrolling and presentations, a
+  DEBUG-only dials panel, and a review-gate report that says what was and was not verified.
+  The same scene fixture is laid out on declared columns inside fixed padding, gutters and
+  protected space. The generator and the rendered view use the same placement rules.
+  The directions differ in hierarchy and composition rather than just colour or radii.
+  Corresponding app-owned nested surfaces stay concentric, with native corner/container APIs
+  availability-guarded for iOS 18. A repeatable export uses the real comparison View, records
+  rendering conditions and source identity, and does not claim macOS images as iOS evidence.

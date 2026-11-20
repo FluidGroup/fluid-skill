@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: swiftui-recordings-screen
+expected_outcome: |
+  One SwiftUI file for a recordings list with a detail presentation and a single primary record
+  action, plus a design sheet. Spacing, radius, type and motion come from named tokens; rows are
+  whole-row targets; transitions use springs and never lock input; tunable values are exposed on a
+  DEBUG-only dials panel; Dynamic Type is respected; and the report states that nothing was
+  compiled or run.

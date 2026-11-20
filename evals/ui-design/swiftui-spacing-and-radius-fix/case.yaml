@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: swiftui-spacing-and-radius-fix
+expected_outcome: |
+  A small, targeted fix to SceneCardsView.swift, not a redesign. The vague feedback is restated as
+  constraints with numbers: the card gap moves to a step on a 4pt spacing scale that is smaller
+  than before, and the image corner becomes concentric with the card (outer radius minus the
+  inset, or the system's concentric shape behind an availability check). The content and structure
+  of the view are unchanged, the reply states the before and after values and the rule, and no
+  variation exploration or full process is run.
+context:
+  scaffold_script: place-files.sh

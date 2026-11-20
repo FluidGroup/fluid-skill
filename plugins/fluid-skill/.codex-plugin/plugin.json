@@ -1,0 +1,43 @@
+{
+  "name": "fluid-skill",
+  "version": "1.0.0",
+  "description": "Apple-platform UI design, coding style and long-term maintainability: Swift, UIKit, AppKit and web UI preferences",
+  "author": {
+    "name": "FluidGroup"
+  },
+  "repository": "https://github.com/FluidGroup/fluid-skill",
+  "keywords": [
+    "coding-style",
+    "swift",
+    "swiftui",
+    "uikit",
+    "appkit",
+    "ui-design",
+    "ios",
+    "macos",
+    "web",
+    "api-design",
+    "code-review",
+    "maintainability"
+  ],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "fluid-skill",
+    "shortDescription": "Apple UI design, coding style and long-term maintainability",
+    "longDescription": "Applies language-neutral principles (coding-aesthetics), their Swift and Apple-platform form (ios-coding-aesthetics), and web UI specifics (web-coding-aesthetics). Designs native SwiftUI, UIKit and AppKit interfaces through constraints, layout exploration, prototypes and evidence (ui-design). Adds judgment about present complexity and future change costs (long-term-maintainability).",
+    "developerName": "FluidGroup",
+    "category": "Development",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Review this change with $coding-aesthetics.",
+      "Use $ios-coding-aesthetics to design this Swift package.",
+      "Design this Apple-platform screen with $ui-design.",
+      "Review this web change with $web-coding-aesthetics.",
+      "Review this change's maintenance costs with $long-term-maintainability.",
+      "Update $coding-aesthetics with this coding-style feedback."
+    ],
+    "brandColor": "#5E5CE6"
+  }
+}

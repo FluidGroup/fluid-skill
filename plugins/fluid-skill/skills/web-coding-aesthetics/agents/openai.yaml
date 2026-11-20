@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Coding Style"
+  short_description: "Web components, CSS, loading, and client/server authority"
+  default_prompt: "Use $web-coding-aesthetics with $coding-aesthetics to review this task."
