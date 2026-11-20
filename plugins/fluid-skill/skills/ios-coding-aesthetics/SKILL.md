@@ -18,6 +18,9 @@ and design evidence, also apply `ui-design`. This skill keeps ownership of
 Swift API shape, state, concurrency, formatting and build conventions; the
 design process does not replace them.
 
+Before building an app feature or component from scratch, check
+`fluid-libraries` for an existing FluidGroup or VergeGroup package.
+
 ## The Principles in Swift
 
 1. **Structure Before Need**: no `where` constraints, conformances or
