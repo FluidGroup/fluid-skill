@@ -3,7 +3,7 @@
 Apple UI design, coding style and long-term maintainability in one plugin:
 principles that hold in any language, their Swift and Apple-platform form,
 web UI specifics, native interface design and judgment about the cost of
-evolving software. One install brings all five skills; each activates when
+evolving software. One install brings all six skills; each activates when
 the task needs it.
 
 ## Skills
@@ -15,6 +15,7 @@ the task needs it.
 | `web-coding-aesthetics` | Web UI: components and catalogs, CSS, loading, accessible controls and client/server boundaries |
 | `ui-design` | Apple UI: composition, visual direction, native navigation, constraints, exploration, prototypes and design evidence |
 | `long-term-maintainability` | Design, implementation, and review: balance present complexity against the cost of changing decisions later |
+| `fluid-libraries` | App features: when to adopt an existing FluidGroup or VergeGroup package instead of building from scratch |
 
 The domain skills build on `coding-aesthetics` and tell the agent to apply it
 with them. The nine failures are structure before need, a wider surface than
@@ -37,6 +38,14 @@ For open layouts it explores a fixed column grid through structured randomizatio
 and presents the legal placements together for human selection.
 Use it alongside the coding skills, which retain API, state, concurrency,
 formatting and build guidance. A small fix does not require a full exploration.
+
+`fluid-libraries` keeps an app from re-implementing what FluidGroup and
+VergeGroup already publish. When a feature is still a plan, it checks the
+platform first, then the project's existing dependencies, then a catalog of
+packages for sheets, lists, chat, camera, image editing, gestures, visual
+effects, state, sync and async work. It states each package's floor and
+caveats (private API, no tagged release) and says when a few copied lines or
+hand-written code are the better answer.
 
 ## References
 
@@ -76,3 +85,9 @@ output is not iOS Simulator or runtime accessibility evidence.
 
 `long-term-maintainability` holds the judgment procedure in `SKILL.md` and
 synthetic contrasting cases in `references/contrasting-cases.md`.
+
+`fluid-libraries` holds the decision procedure and a need-to-package table in
+`SKILL.md`, with the product, entry point, floor and caveats of each package in
+`references/`: `components.md`, `interaction.md`, `swiftui-utilities.md`,
+`state-and-data.md`, `foundation.md` and `uikit-legacy.md`. The catalog is a
+snapshot; the package's own README and manifest are the authority.
