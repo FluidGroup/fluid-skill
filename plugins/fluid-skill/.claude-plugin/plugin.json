@@ -1,7 +1,7 @@
 {
   "name": "fluid-skill",
   "version": "1.0.0",
-  "description": "Apple-platform UI design, coding style and long-term maintainability: Swift, UIKit, AppKit and web UI preferences",
+  "description": "Apple-platform UI design, coding style, long-term maintainability and animated sequence visualizations: Swift, UIKit, AppKit and web UI preferences",
   "author": {
     "name": "FluidGroup"
   }
