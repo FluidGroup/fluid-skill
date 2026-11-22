@@ -22,7 +22,7 @@ a new value, add it as a token with a reason instead of inventing one inline.
   - each flowing item (version, request, message): blue, orange, then purple, green
   - the special actor or feedback path: pink, dashed
   - "wrong" marks and the bad verdict: pink; "right" verdict: lime
-  - UI accent (active step number, scrubber, lil-gui fills): green
+  - UI accent (active step marker, scrubber, lil-gui fills): green
 - A highlighted wire takes the colour of the item travelling on it, at ~0.9 opacity, and
   fades back after the item arrives.
 - The page is dark-only by design (`color-scheme:dark`, explicit body background).
@@ -66,13 +66,22 @@ States on a dot:
 - Components are cards: `fill surface, stroke line, stroke-width 2, rx 16`; title 17px/600 in
   `--mut` at 24px inner padding; section labels 12px uppercase, letter-spacing .06em, `--dim`.
 - Slots/queues inside a card: dashed rect (`#fffce105` fill, `#fffce110` stroke, dash 4 4, rx 8).
-- Forward wires: cubic Béziers from one source point that fan out horizontally, ending in a
-  small solid triangle arrowhead in `--dim`.
+- Forward wires: straight for aligned cards, or smooth cubic Béziers for fan-out.
 - Feedback / return paths: orthogonal segments with 16px rounded corners, dashed
   (`5 6`, `#3d3f38`), highlighted in the actor colour while used.
+- Place the shaft and open arrowhead in the same SVG group so both inherit its stroke
+  and fade together. Use round caps and joins on the head. Apply any dash pattern to
+  the shaft. Allow 2 SVG units of clearance from the visible card stroke at each end,
+  including the arrow tip's stroke width. Rotate the head to the path's end tangent.
 - Evidence areas: a "RECEIVED" column of dots inside each receiver card, and a global
   "DELIVERY ORDER" row of numbered dots along the bottom. These make the verdict
   self-evident without reading text.
+- Use a 1280 × 720 frame with 32px padding. Place the diagram on the left and the step
+  list on the right. Keep that arrangement in normal playback, video preview and export.
+  At narrow widths, shrink the whole 16:9 frame uniformly.
+- Use a borderless step list with short labels and small circular markers. Mark the
+  active step with `aria-current="step"`, a green dot and a faint filled background.
+  Keep the active row in view if the list exceeds the frame height.
 
 ## Page chrome
 
@@ -82,15 +91,11 @@ States on a dot:
   control 12 → segment 8 (padding 4 incl. 1px border); kbd 4.
 - Controls row: segmented scenario toggle, ◀ Play ▶, range scrubber + mono time, legend,
   speed select. All 36px tall, 13px/600 text, `--mut` → `--fg` on hover, 2px focus outline.
-- Layout: a top row (mono uppercase eyebrow, "Preview video frame" button), then a grid
-  `minmax(0,1fr) 304px`. Left column: the dashed video frame, the controls row under it,
-  then a short lede with the source link. Right column: "STEPS" label, numbered step list,
-  tuning panel, keyboard hint. Single column under 900px.
-- Inside the frame: padding 32; tag + h1 (22px/600, fixed size) on one row; the brief as a
-  two-column `<dl>` (mono uppercase PROBLEM in pink / FIX in lime, 15px text in `--mut`);
-  caption 18px/500 with a mono step number; then the stage.
-- Type: system sans for text, `ui-monospace` for numbers, step indices and labels.
-- Final caption: 600 weight, pink or lime.
+- Layout: a top row with a source label and preview button, then the dashed video
+  frame. Below it, place the player, any needed scenario context and source links,
+  and the tuning panel. This area can reflow on narrow screens.
+- Type: system sans for text, `ui-monospace` for values and code labels. Use concise
+  English labels by default, with the user-requested language when specified.
 
 ## Things the user rejected along the way (don't reintroduce)
 

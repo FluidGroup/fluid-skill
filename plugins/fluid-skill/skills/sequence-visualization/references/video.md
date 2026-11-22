@@ -14,6 +14,7 @@ npx playwright install chromium
 
 Known trouble:
 - npm may block `ffmpeg-static`'s install script; run `node node_modules/ffmpeg-static/install.js`.
+- To use an installed ffmpeg, set `FFMPEG_BIN` to its executable path.
 - If `playwright install` hangs while extracting, unzip the downloaded
   `playwright-download-chromium-*.zip` from `$TMPDIR` into a folder and pass
   `CHROMIUM=<path to the Chromium executable>`. Do not try to strip macOS quarantine
@@ -31,16 +32,17 @@ Arguments: `<url> [fps=60] [subframes=1] [shutterDegrees=180] [maxSeconds]`.
 Env: `NAME` (file prefix), `OUT_DIR` (default `./out`), `CHROMIUM`.
 
 What it does:
-- viewport 1280×900 at deviceScaleFactor 1.5, so the video is 1920px wide; the height
-  follows the frame's content
-- adds `export render` to `<html>`, so only `#frame` is laid out, at exactly 1280px and
-  without its dashed outline, then screenshots that element for every frame
+- uses a 1280×900 browser viewport at deviceScaleFactor 1.5 and captures the starter's
+  1280×720 frame at 1920×1080
+- adds `export render` to `<html>` to hide the page controls and remove the scale
+  and dashed outline, then screenshots `#frame` for every frame
 - renders each key of `SCENARIOS` (clicking `#sc-<key>`), holds the first frame 0.5s and
   the last 2s, encodes H.264 (crf 16, yuv420p, faststart), then concatenates all
   scenarios into `<NAME>.mp4` alongside `<NAME>-<key>.mp4`
 - `maxSeconds` limits each scenario for quick test renders
 
-Use "Preview video frame" in the page to see what will be recorded before rendering.
+Use “Preview video frame” to inspect the same 16:9 composition before rendering.
+For a short test export, check the encoded width and height with `ffprobe`.
 
 ## Motion blur
 

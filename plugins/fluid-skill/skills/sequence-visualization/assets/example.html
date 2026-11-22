@@ -1,8 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Verge Recursive Commit</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: header, controls row, then stage + step list side by side (stacked on narrow screens) */
 :root{
   --bg:#0E100F; --surface:#151716; --raised:#1C1F1D; --line:#fffce114; --wire:#33362F;
   --fg:#FFFCE1; --mut:#A3A291; --dim:#6B6B5E;
@@ -23,34 +26,19 @@ body{font-family:var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px)
 .top{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
 .primary{display:flex;flex-direction:column;gap:var(--s4);min-width:0}
 .eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
-h1{margin:0;font-size:22px;font-weight:600;text-wrap:balance;letter-spacing:-.01em}
 
-/* Video frame: everything inside #frame is exactly what render.mjs records, nothing outside it is.
-   The dashed edge marks the video's bounds; it is not drawn in the video itself. */
-.frame{box-sizing:border-box;display:flex;flex-direction:column;gap:var(--s4);padding:var(--s8);background:var(--bg);outline:1px dashed #fffce130;outline-offset:0}
-.frame-head{display:flex;flex-direction:column;gap:var(--s3)}
-.frame-title{display:flex;align-items:center;gap:var(--s3)}
-.brief{margin:0;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--s1) var(--s3);font-size:15px;line-height:1.5}
-.brief dt{font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding-top:2px}
-.brief dd{margin:0;color:var(--mut)}
-.brief .problem{color:var(--pink)} .brief .fix{color:var(--lime)}
-.brief .off{opacity:.45}
-.tag{font:700 12px var(--mono);letter-spacing:.1em;padding:var(--s1) var(--s2);border-radius:var(--r-item);border:1px solid var(--line);color:var(--mut)}
-.tag.before{color:var(--pink)} .tag.after{color:var(--lime)}
-.frame-label{font:12px var(--mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+/* Preview scales the 1280 × 720 composition. The renderer captures it at full size. */
+.frame-shell{position:relative;width:100%;aspect-ratio:16 / 9;overflow:hidden;outline:1px dashed #fffce130}
+.frame{position:absolute;inset:0;box-sizing:border-box;width:1280px;height:720px;padding:var(--s8);display:grid;grid-template-columns:minmax(0,1fr) 272px;gap:var(--s4);background:var(--bg);transform:scale(var(--frame-scale,1));transform-origin:top left}
 #exit-preview{display:none;position:fixed;right:var(--s4);bottom:var(--s4);z-index:70}
-/* preview mode: only the frame, at the export width */
 .export body{padding:var(--s4)}
-.export .top,.export .bar,.export .lede,.export .side{display:none!important}
-.export .main{display:block}
-.export .frame{width:min(1280px,100%);margin:0 auto}
+.export .top,.export .main{display:none}
 .export #exit-preview{display:block}
-/* render mode (set by render.mjs): fixed 1280px, no frame edge, no page padding */
-.export.render body{padding:0}
-.export.render .frame{width:1280px;margin:0;outline:none}
+.export.render body{margin:0;padding:0}
+.export.render .frame-shell{width:1280px;outline:none}
+.export.render .frame{transform:none}
 .export.render #exit-preview{display:none}
 .lede{margin:0;color:var(--mut);max-width:72ch;line-height:1.6;font-size:15px}
-.lede code,.brief code{font-family:var(--mono);font-size:.92em;color:var(--fg)}
 a{color:var(--fg)}
 
 .bar{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);align-items:center}
@@ -66,25 +54,20 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .time{font:12px var(--mono);color:var(--dim);font-variant-numeric:tabular-nums;min-width:4.5em;text-align:right}
 select{box-sizing:border-box;height:var(--control-h);font:600 13px var(--sans);color:var(--mut);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-control);padding:0 var(--s2)}
 
-.caption{min-height:1.6em;font-size:18px;font-weight:500;color:var(--mut)}
-.caption b{font-family:var(--mono);color:var(--dim);font-weight:600;margin-right:var(--s3)}
-.caption.final{font-weight:600}
-.caption.final.bad{color:var(--pink)} .caption.final.ok{color:var(--lime)}
-
 .main{display:grid;grid-template-columns:minmax(0,1fr) 304px;gap:var(--s4);align-items:start}
 .side{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
 @media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
-.stage{border:1px solid var(--line);border-radius:var(--r-panel);overflow:hidden;background:var(--bg)}
-.stage svg{display:block;width:100%;height:auto}
+.stage{display:grid;place-items:center;min-height:0;border:1px solid var(--line);border-radius:var(--r-panel);overflow:hidden;background:var(--bg)}
+.stage svg{display:block;width:100%;height:100%}
 
-.steps{list-style:none;margin:0;padding:var(--s2);border:1px solid var(--line);border-radius:var(--r-panel);background:var(--surface);display:flex;flex-direction:column;gap:var(--s1)}
-.steps li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:var(--s6) 1fr;gap:var(--s2);padding:var(--s2) var(--s3);border-radius:var(--r-item);cursor:pointer;font-size:13.5px;line-height:1.45;color:var(--dim)}
-.steps li button:hover{background:#ffffff08}
-.steps li button:focus-visible{outline:2px solid var(--fg)}
-.steps li .n{font-family:var(--mono);font-size:12px;padding-top:1px}
-.steps li.done button{color:var(--mut)}
+.step-pane{display:flex;flex-direction:column;justify-content:center;min-height:0}
+.steps{position:relative;list-style:none;margin:0;padding:var(--s1);display:flex;flex-direction:column;gap:var(--s1);overflow:auto;scrollbar-width:none;overflow-anchor:none}
+.steps li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:6px minmax(0,1fr);gap:var(--s2);align-items:baseline;padding:var(--s2) var(--s3);border-radius:var(--r-item);cursor:pointer;font-size:15px;line-height:1.45;color:var(--mut)}
+.steps li button:hover{color:var(--fg)}
+.steps li button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);align-self:center}
 .steps li.active button{background:#fffce10d;color:var(--fg)}
-.steps li.active .n{color:var(--green)}
+.steps li.active .step-dot{background:var(--green)}
 .hint{font-size:12px;color:var(--dim)}
 .hint kbd{font-family:var(--mono);border:1px solid var(--line);border-radius:var(--r-key);padding:0 var(--s1);color:var(--mut)}
 
@@ -100,9 +83,10 @@ svg text{font-family:var(--sans)}
 .wire{fill:none;stroke:var(--wire);stroke-width:2}
 .wire-hi{fill:none;stroke-width:2.5}
 .wire-hi.v1{stroke:var(--v1)} .wire-hi.v2{stroke:var(--v2)}
-.ah{fill:var(--dim)}
-.ret{fill:none;stroke:#3d3f38;stroke-width:1.5;stroke-dasharray:5 6}
-.ret-hi{fill:none;stroke:var(--commit);stroke-width:2;stroke-dasharray:5 6}
+.ah{stroke-linecap:round;stroke-linejoin:round}
+.ret{fill:none;stroke:#3d3f38;stroke-width:1.5}
+.ret-hi{fill:none;stroke:var(--commit);stroke-width:2.5}
+.ret .shaft,.ret-hi .shaft{stroke-dasharray:5 6}
 .h{font-size:17px;font-weight:600;fill:var(--mut)}
 .lbl{font-size:12px;fill:var(--dim);letter-spacing:.06em}
 .num{font-size:12px;fill:#4f5048;font-family:var(--mono)}
@@ -113,27 +97,25 @@ svg text{font-family:var(--sans)}
 .warn{font-size:18px;font-weight:800;fill:var(--pink)}
 .state-l{font:600 13px var(--mono);fill:var(--mut)}
 </style>
-
+</head>
+<body>
 <div class="wrap">
   <div class="top">
     <div class="eyebrow">VergeGroup/swift-verge · PR #220</div>
     <button class="btn" id="preview" type="button">Preview video frame</button>
   </div>
 
+  <div class="frame-shell">
+    <section class="frame" id="frame" aria-label="Video frame">
+      <div class="stage"><svg id="svg" viewBox="0 62 1100 672" role="img" aria-label="Animated diagram of state delivery from Store to three sinks"></svg></div>
+      <aside class="step-pane" aria-label="Sequence steps">
+        <ol class="steps" id="steps" role="list"></ol>
+      </aside>
+    </section>
+  </div>
+
   <div class="main">
     <div class="primary">
-      <section class="frame" id="frame" aria-label="Video frame">
-        <div class="frame-head">
-          <div class="frame-title"><span class="tag before" id="tag">BEFORE</span><h1>Delivering events in order when a sink commits</h1></div>
-          <dl class="brief">
-            <dt class="problem" data-k="before">Problem</dt><dd data-k="before">A sink that calls <code>commit</code> inside its handler triggers a nested delivery. The new state reaches the remaining sinks before the old one does.</dd>
-            <dt class="fix" data-k="after">Fix</dt><dd data-k="after">A trampoline: a nested commit only enqueues its event, and the delivery loop that is already running drains the queue one event at a time, in order.</dd>
-          </dl>
-        </div>
-        <div class="caption" id="caption"></div>
-        <div class="stage"><svg id="svg" viewBox="0 62 1100 672" role="img" aria-label="Animated diagram of state delivery from Store to three sinks"></svg></div>
-      </section>
-
       <div class="bar">
         <div class="seg" role="group" aria-label="Scenario">
           <button id="sc-before" type="button" aria-pressed="true" data-k="before">Before</button>
@@ -154,12 +136,10 @@ svg text{font-family:var(--sans)}
         </select>
       </div>
 
-      <p class="lede"><a href="https://github.com/VergeGroup/swift-verge/pull/220">View PR #220 on GitHub</a></p>
+      <p class="lede">A sink commits v2 while receiving v1. Before, the nested commit delivers v2 immediately. After, the running delivery loop finishes v1 first. <a href="https://github.com/VergeGroup/swift-verge/pull/220">View PR #220 on GitHub</a></p>
     </div>
 
     <div class="side">
-      <div class="frame-label">Steps</div>
-      <ol class="steps" id="steps"></ol>
       <div id="tune"></div>
       <textarea id="tune-json" hidden rows="8" readonly aria-label="Settings JSON" style="width:100%;box-sizing:border-box;background:var(--surface);color:var(--mut);border:1px solid var(--line);border-radius:var(--r-control);font:12px var(--mono);padding:var(--s3)"></textarea>
       <div class="hint"><kbd>←</kbd> <kbd>→</kbd> step · <kbd>space</kbd> play / pause · click a step to jump. The dashed box is the video frame.</div>
@@ -195,12 +175,11 @@ function saveConfig() { try { localStorage.setItem('verge220-tuning', JSON.strin
 const NS = 'http://www.w3.org/2000/svg';
 const svg = document.getElementById('svg');
 const SINK_Y = {A:180, B:360, C:540};
-const SRC = [500, 360];
 // Store card: x 48..488, y 250..470, 24 inner padding. Event slot: x 72..464, y 382..446.
 const SLOT_X0 = 100, SLOT_DX = 56, EV_Y = 406;
-// sink A top -> up -> left -> down into Store top, straight segments with 16 corners
-const RET = 'M760 130 V112 A16 16 0 0 0 744 96 H284 A16 16 0 0 0 268 112 V240';
-const wireD = s => `M${SRC[0]} ${SRC[1]} C 610 ${SRC[1]}, 600 ${SINK_Y[s]}, 712 ${SINK_Y[s]}`;
+// Leave 2 SVG units between each arrow and the visible card stroke.
+const RET = 'M760 127 V112 A16 16 0 0 0 744 96 H284 A16 16 0 0 0 268 112 V247';
+const wireD = y => `M491 360 C610 360 600 ${y} 717 ${y}`;
 const slotX = i => SLOT_X0 + i * SLOT_DX;
 
 function el(tag, attrs = {}, parent = svg, text) {
@@ -217,44 +196,46 @@ function dot(parent, v, letter, r = 12, glow = false) {
   if (letter) el('text', {class: 'dl', 'text-anchor': 'middle', 'dominant-baseline': 'central'}, g, letter);
   return g;
 }
-function chip(parent, label, cls, w = 46) {
-  const g = el('g', {opacity: 0}, parent);
-  el('rect', {class: 'chip ' + cls, x: -w / 2, y: -14, width: w, height: 28, rx: 9}, g);
-  el('text', {class: 'mono ' + cls, 'text-anchor': 'middle', 'dominant-baseline': 'central'}, g, label);
+function arrow(cls, d, x, y, angle, opacity = 1) {
+  const g = el('g', {class: cls, opacity});
+  el('path', {class: 'shaft', d}, g);
+  el('path', {class: 'ah', d: 'M-7 -6 L-1.25 0 L-7 6 M-11 0 H-1.25',
+    transform: `translate(${x} ${y}) rotate(${angle})`}, g);
   return g;
 }
 
 /* ---------- scenarios ---------- */
 // One dot per event (commit). Each event is delivered to sink A, B, C in turn.
+const opening = [
+  {kind: 'commit', text: 'Commit v1'},
+  {kind: 'deliver', to: '1A', text: 'Deliver v1 to sink A'},
+  {kind: 'inner', text: 'Sink A commits v2'},
+];
 const SCENARIOS = {
   before: {
     insert: 'front',
     steps: [
-      {kind: 'commit', text: 'commit(v1): the v1 event starts going out to sink A, B and C'},
-      {kind: 'deliver', to: '1A', text: 'v1 → sink A'},
-      {kind: 'inner', text: 'Inside its sink, A calls commit(v2) synchronously'},
-      {kind: 'insert', text: 'The v2 event is delivered right away. v1 is paused with B and C still to go'},
-      {kind: 'deliver', to: '2A', text: 'v2 → sink A'},
-      {kind: 'deliver', to: '2B', text: 'v2 → sink B'},
-      {kind: 'deliver', to: '2C', text: 'v2 → sink C'},
-      {kind: 'deliver', to: '1B', text: 'v1 resumes: v1 → sink B, after v2'},
-      {kind: 'deliver', to: '1C', text: 'v1 → sink C, after v2'},
-      {kind: 'verdict', text: 'sink B and C received v2 → v1. The order is broken.'},
+      ...opening,
+      {kind: 'insert', text: 'v2 takes priority'},
+      {kind: 'deliver', to: '2A', text: 'Deliver v2 to sink A'},
+      {kind: 'deliver', to: '2B', text: 'Deliver v2 to sink B'},
+      {kind: 'deliver', to: '2C', text: 'Deliver v2 to sink C'},
+      {kind: 'deliver', to: '1B', text: 'Resume v1 at sink B'},
+      {kind: 'deliver', to: '1C', text: 'Deliver v1 to sink C'},
+      {kind: 'verdict', text: 'B and C receive v2 before v1'},
     ],
   },
   after: {
     insert: 'back',
     steps: [
-      {kind: 'commit', text: 'commit(v1): the v1 event starts going out to sink A, B and C'},
-      {kind: 'deliver', to: '1A', text: 'v1 → sink A'},
-      {kind: 'inner', text: 'Inside its sink, A calls commit(v2)'},
-      {kind: 'insert', text: 'The v2 event waits in the queue until v1 is done'},
-      {kind: 'deliver', to: '1B', text: 'v1 → sink B'},
-      {kind: 'deliver', to: '1C', text: 'v1 → sink C. v1 is done'},
-      {kind: 'deliver', to: '2A', text: 'v2 → sink A'},
-      {kind: 'deliver', to: '2B', text: 'v2 → sink B'},
-      {kind: 'deliver', to: '2C', text: 'v2 → sink C'},
-      {kind: 'verdict', text: 'Every sink received v1 → v2, in order.'},
+      ...opening,
+      {kind: 'insert', text: 'Queue v2 behind v1'},
+      {kind: 'deliver', to: '1B', text: 'Deliver v1 to sink B'},
+      {kind: 'deliver', to: '1C', text: 'Deliver v1 to sink C'},
+      {kind: 'deliver', to: '2A', text: 'Deliver v2 to sink A'},
+      {kind: 'deliver', to: '2B', text: 'Deliver v2 to sink B'},
+      {kind: 'deliver', to: '2C', text: 'Deliver v2 to sink C'},
+      {kind: 'verdict', text: 'All sinks receive v1 before v2'},
     ],
   },
 };
@@ -280,10 +261,6 @@ function build(key) {
   </defs>`;
   const sc = SCENARIOS[key];
   scenario = key;
-  const tagEl = document.getElementById('tag');
-  tagEl.textContent = key.toUpperCase();
-  tagEl.className = 'tag ' + key;
-  document.querySelectorAll('.brief [data-k]').forEach(e => e.classList.toggle('off', e.dataset.k !== key));
   steps = sc.steps;
 
   /* static frame */
@@ -296,17 +273,18 @@ function build(key) {
   const wires = {}, wiresHi = {};
   for (const s in SINK_Y) {
     const y = SINK_Y[s];
-    wires[s] = el('path', {class: 'wire', id: 'wire-' + s, d: wireD(s)});
-    wiresHi[s] = {1: el('path', {class: 'wire-hi v1', d: wireD(s), opacity: 0}), 2: el('path', {class: 'wire-hi v2', d: wireD(s), opacity: 0})};
-    el('path', {class: 'ah', d: `m718 ${y} -9 5.2v-10.4z`});
+    const d = wireD(y);
+    wires[s] = arrow('wire', d, 717, y, 0).firstElementChild;
+    wiresHi[s] = {
+      1: arrow('wire-hi v1', d, 717, y, 0, 0),
+      2: arrow('wire-hi v2', d, 717, y, 0, 0),
+    };
     el('rect', {class: 'card', x: 720, y: y - 50, width: 332, height: 100, rx: 16});
     el('text', {class: 'h', x: 744, y, 'dominant-baseline': 'central'}, svg, 'sink ' + s);
   }
-  el('circle', {cx: SRC[0], cy: SRC[1], r: 4, fill: '#62666D'});
   el('text', {class: 'lbl', x: 888, y: 120}, svg, 'RECEIVED');
-  el('path', {class: 'ret', id: 'ret', d: RET});
-  const retHi = el('path', {class: 'ret-hi', d: RET, opacity: 0});
-  el('path', {class: 'ah', d: 'm268 248 -5.2 -9 h10.4z'});
+  const ret = arrow('ret', RET, 268, 247, 90).firstElementChild;
+  const retHi = arrow('ret-hi', RET, 268, 247, 90, 0);
   el('text', {class: 'lbl', x: 48, y: 652}, svg, 'DELIVERY ORDER');
   for (let i = 0; i < 6; i++) el('text', {class: 'num', x: 48 + i * 64, y: 690, 'dominant-baseline': 'central'}, svg, i + 1);  // number, 8 gap, dot
 
@@ -342,7 +320,7 @@ function build(key) {
   steps.forEach((st, i) => {
     const t0 = tl.duration();
     starts.push(t0);
-    tl.addLabel('s' + i);
+    tl.addLabel('s' + i, t0);
 
     if (st.kind === 'commit') {
       tl.to(stV1, {opacity: 1, duration: 0.3});
@@ -391,11 +369,12 @@ function build(key) {
     if (st.kind === 'inner') {
       tl.to(retHi, {opacity: 1, duration: 0.2});
       tl.set(commitChip, {opacity: 1}, '<');
-      tl.to(commitChip, {motionPath: {path: '#ret', align: '#ret', alignOrigin: [0.5, 0.5]}, duration: C.commitTravel}, '<');
-      tl.to(commitChip, {opacity: 0, duration: 0.15});
+      tl.to(commitChip, {motionPath: {path: ret, align: ret, alignOrigin: [0.5, 0.5]}, duration: C.commitTravel}, '<');
+      const arrival = tl.duration();
+      tl.to(commitChip, {opacity: 0, duration: 0.15}, arrival);
       tl.to(retHi, {opacity: 0, duration: 0.3}, '<');
-      tl.to(stV1, {opacity: 0, duration: 0.2}, '<');
-      tl.fromTo(stV2, {opacity: 0, scale: 0.85, transformOrigin: '0% 50%'}, {opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(2)'}, '<');
+      tl.to(stV1, {opacity: 0, duration: 0.2}, arrival);
+      tl.fromTo(stV2, {opacity: 0, scale: 0.85, transformOrigin: '0% 50%'}, {opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(2)'}, arrival);
     }
 
     if (st.kind === 'insert') {
@@ -429,16 +408,16 @@ function build(key) {
 const playBtn = document.getElementById('play');
 const scrub = document.getElementById('scrub');
 const timeEl = document.getElementById('time');
-const caption = document.getElementById('caption');
 const stepsEl = document.getElementById('steps');
 
 function renderSteps() {
   stepsEl.innerHTML = '';
+  delete stepsEl.dataset.active;
   steps.forEach((s, i) => {
     const li = document.createElement('li');
     const b = document.createElement('button');
     b.type = 'button';
-    b.innerHTML = `<span class="n">${String(i + 1).padStart(2, '0')}</span><span></span>`;
+    b.innerHTML = '<span class="step-dot" aria-hidden="true"></span><span></span>';
     b.lastChild.textContent = s.text;
     b.addEventListener('click', () => goTo(i));
     li.appendChild(b);
@@ -463,17 +442,16 @@ function sync() {
   const a = activeStep();
   scrub.value = Math.round(tl.progress() * 1000);
   timeEl.textContent = tl.time().toFixed(1) + 's';
-  if (a < 0) {
-    caption.className = 'caption';
-    caption.innerHTML = '<b>00</b>Press Play, or step through with ▶';
-  } else {
-    caption.className = 'caption' + (a === steps.length - 1 ? (' final ' + (scenario === 'after' ? 'ok' : 'bad')) : '');
-    caption.innerHTML = `<b>${String(a + 1).padStart(2, '0')}</b>`;
-    caption.appendChild(document.createTextNode(steps[a].text));
+  if (stepsEl.dataset.active !== String(a)) {
+    stepsEl.dataset.active = a;
+    [...stepsEl.children].forEach((li, i) => {
+      li.classList.toggle('active', i === a);
+      if (i === a) li.firstChild.setAttribute('aria-current', 'step');
+      else li.firstChild.removeAttribute('aria-current');
+    });
+    const row = stepsEl.children[a];
+    stepsEl.scrollTop = row ? row.offsetTop + (row.offsetHeight - stepsEl.clientHeight) / 2 : 0;
   }
-  [...stepsEl.children].forEach((li, i) => {
-    li.className = i === a ? 'active' : i < a ? 'done' : '';
-  });
   const playing = tl.isActive() || (seekTween && seekTween.isActive());
   playBtn.textContent = playing ? 'Pause' : (tl.progress() >= 1 ? 'Replay' : 'Play');
 }
@@ -521,7 +499,7 @@ document.getElementById('preview').addEventListener('click', () => root.classLis
 document.getElementById('exit-preview').addEventListener('click', () => root.classList.remove('export'));
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && root.classList.contains('export')) { root.classList.remove('export'); return; }
-  if (e.target.closest('input,select')) return;
+  if (e.target.closest('input,select,textarea') || (e.key === ' ' && e.target.closest('button'))) return;
   if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('next').click(); }
   if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('prev').click(); }
   if (e.key === ' ') { e.preventDefault(); playBtn.click(); }
@@ -567,11 +545,21 @@ const copyCtl = gui.controllers[gui.controllers.length - 1];
 gui.add({reset() { Object.assign(C, DEFAULTS); gui.controllersRecursive().forEach(c => c.updateDisplay()); rebuild(); }}, 'reset').name('Reset to defaults');
 gui.onFinishChange(rebuild);
 
+const shell = document.querySelector('.frame-shell');
+const frame = document.getElementById('frame');
+function fitFrame() {
+  shell.style.setProperty('--frame-scale', shell.getBoundingClientRect().width / frame.offsetWidth);
+}
+fitFrame();
+new ResizeObserver(fitFrame).observe(shell);
+
 build('before');
 attachDevtools();
-// keep the caption, step list and scrubber in step with whatever moves the timeline (incl. GSDevTools)
+// Sync the player when the timeline is scrubbed through GSDevTools.
 let lastT = -1;
 gsap.ticker.add(() => { if (tl && tl.time() !== lastT) { lastT = tl.time(); sync(); } });
 // open in a readable resting state: the full Before story, finished
 tl.progress(1); sync();
 </script>
+</body>
+</html>
