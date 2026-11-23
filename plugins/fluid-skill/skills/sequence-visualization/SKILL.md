@@ -5,7 +5,7 @@ description: >-
   state move between components over time, and what goes wrong or right, as a
   single GSAP + SVG HTML page: dark near-monochrome frame, coloured gradient
   dots, a step player, a live tuning panel, a marked video frame and
-  frame-accurate MP4 export with optional motion blur. Use whenever the user
+  frame-accurate MP4 and GIF export with optional motion blur. Use whenever the user
   wants to visualize or animate a bug, race condition, reentrancy or ordering
   problem, protocol, pipeline, pull request or architecture behaviour, asks to
   "animate this", "explain this visually", "make an SVG animation", "show
@@ -46,7 +46,8 @@ reuse the frame, styling, player and tuning panel.
 6. **Verify and publish** as a standalone HTML artifact (or open locally). In each
    scenario, seek to intermediate points from both directions and confirm they look
    the same. Compare the regular player with “Preview video frame” at narrow and wide widths.
-7. **Export video** when asked using `scripts/render.mjs`. See `references/video.md`.
+7. **Export when asked** using `scripts/render.mjs` for MP4 or gifski for one looping
+   GIF per scenario at 1280 × 720 and 24 fps with motion blur. See `references/video.md`.
 
 ## The video frame
 
@@ -117,4 +118,4 @@ artifact, so prefer this page plus `render.mjs` unless the user asks for it.
 | `references/design.md` | Laying out the frame, choosing colours, dots, type, spacing |
 | `references/timeline.md` | Writing `build()`, step kinds, player controls, known pitfalls |
 | `references/tuning.md` | Adding the lil-gui panel, GSDevTools, persisting values |
-| `references/video.md` | Exporting MP4, with or without motion blur |
+| `references/video.md` | Exporting MP4 and GIF with motion blur |

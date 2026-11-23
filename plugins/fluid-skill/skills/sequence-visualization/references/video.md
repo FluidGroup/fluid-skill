@@ -1,4 +1,4 @@
-# Video export
+# Video and GIF export
 
 Screen-recording a GSAP page drops and duplicates frames. Instead, `scripts/render.mjs`
 pauses the timeline and calls `tl.seek(t)` for every frame, screenshots `#frame`, and pipes
@@ -60,3 +60,40 @@ NAME=my-sequence node render.mjs http://localhost:8731/page.html 60 8 180
 
 Check a few frames (`ffmpeg -ss 7.2 -i out.mp4 -frames:v 1 f.png`) before handing over, and
 say which parts you did not watch.
+
+## GIF export
+
+Use gifski (on macOS, `brew install gifski`). Export one GIF per scenario at 1280 × 720
+(16:9), targeting 24 fps. Average four temporal samples per frame with a 180° shutter
+(half a frame, about 20.8 ms). Keep the first frame visible for 0.5 s and the last for
+2 s, then loop indefinitely. Start at gifski quality 90.
+
+Run the bundled renderer at 24 fps to generate the numbered PNG sequences in
+`gif-render/frames-<scenario>-mb/`. Feed those PNGs directly into gifski to preserve
+the render quality. The holds are added below because the PNG sequences contain
+the timeline frames only.
+
+```sh
+OUT_DIR=gif-render node render.mjs http://localhost:8731/page.html 24 4 180
+
+for frames in gif-render/frames-*-mb; do
+  (
+    set -- "$frames"/*.png
+    first=$1
+    for last do :; done
+
+    for i in $(seq 12); do set -- "$first" "$@"; done
+    for i in $(seq 48); do set -- "$@" "$last"; done
+
+    scenario=${frames##*/frames-}
+    gifski --fps 24 --width 1280 --height 720 --quality 90 --repeat 0 --no-sort \
+      --output "gif-render/${scenario%-mb}.gif" "$@"
+  )
+done
+```
+
+Inspect a moving frame and the last held frame in each GIF. If the shutter interval
+straddles an instant label, step, or receipt change and makes it look doubled, adjust the
+capture to use only the center sample for that frame. Verify 1280 × 720, timing and
+looping on the encoded GIFs. GIF delays use 10 ms units, so 24 fps is represented by
+a mix of 40 ms and 50 ms delays during motion. Identical frames can share a longer delay.
