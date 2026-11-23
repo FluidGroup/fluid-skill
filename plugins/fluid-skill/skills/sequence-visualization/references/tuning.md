@@ -5,10 +5,9 @@ opacity and effect strength lives in one object:
 
 ```js
 const DEFAULTS = {
-  travel: 0.9, commitTravel: 1.0, gap: 0.45, shift: 0.45, pop: 0.35,
-  ease: 'power2.inOut', popEase: 'back.out(2.5)',
-  eventSize: 16, moverSize: 11, recvSize: 13,
-  pausedOpacity: 0.4, glow: 0.22, grain: 0.16,
+  travel: 0.9, gap: 0.45, fade: 0.2, pop: 0.3,
+  ease: 'power2.inOut', popEase: 'power2.out',
+  dotSize: 13, pausedOpacity: 0.4, glow: 0.22, grain: 0.16,
   devtools: false,
 };
 const C = Object.assign({}, DEFAULTS);
@@ -21,7 +20,7 @@ to tune (small fixed nudges like 0.14s are fine).
 
 ## lil-gui
 
-- Mount in the side column: `new lil.GUI({container: document.getElementById('tune'), title: 'Tuning'})`.
+- Mount outside the video frame: `new lil.GUI({container: document.getElementById('tune'), title: 'Tuning'})`.
 - Folders: **Timing (seconds)**, **Easing** (dropdown of named eases), **Look** (sizes, opacity,
   glow, grain). Give every control a plain-language `.name()`.
 - `gui.onFinishChange(rebuild)` where `rebuild()` keeps the current progress:
@@ -44,8 +43,3 @@ document.body.style.paddingBottom = '96px';
 ```
 
 Kill and re-create it after every rebuild, since the timeline object changes.
-
-## Artifact vs whiteboard
-
-Publish as a normal HTML artifact. Canvas/whiteboard-style artifact types cannot run these
-scripts, so they cannot host the timeline or the tuning panel.

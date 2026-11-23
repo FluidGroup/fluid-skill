@@ -12,17 +12,14 @@ a new value, add it as a token with a reason instead of inventing one inline.
   --fg:#FFFCE1; --mut:#A3A291; --dim:#6B6B5E;
   --green:#6EE36E; --pink:#F5A3F0; --orange:#FF8A3D; --blue:#4FB3E8; --purple:#9D95FF; --lime:#B8F27C;
   /* semantic aliases: rename per story */
-  --v1:var(--blue); --v2:var(--orange); --commit:var(--pink);
+  --item:var(--blue);
   color-scheme:dark;
 }
 ```
 
 - Frame (cards, wires, labels) uses only bg/surface/line/wire/fg/mut/dim.
-- Accents are reserved for things that carry meaning. Typical mapping:
-  - each flowing item (version, request, message): blue, orange, then purple, green
-  - the special actor or feedback path: pink, dashed
-  - "wrong" marks and the bad verdict: pink; "right" verdict: lime
-  - UI accent (active step marker, scrubber, lil-gui fills): green
+- Reserve accents for moving items and meaningful states. Use green for controls
+  and the active step marker.
 - A highlighted wire takes the colour of the item travelling on it, at ~0.9 opacity, and
   fades back after the item arrives.
 - The page is dark-only by design (`color-scheme:dark`, explicit body background).
@@ -33,7 +30,7 @@ Every moving or result item is a circle, never a text chip. Gradient per colour,
 spot low and to the left, plus a white grain overlay:
 
 ```html
-<radialGradient id="g-v1" cx="0.5" cy="0.5" r="0.85" fx="0.38" fy="0.85">
+<radialGradient id="dot-gradient" cx="0.5" cy="0.5" r="0.85" fx="0.38" fy="0.85">
   <stop offset="0" stop-color="#D2ECFA"/><stop offset="0.3" stop-color="#8FCBEE"/>
   <stop offset="0.8" stop-color="#4FB3E8"/><stop offset="1" stop-color="#3FA2D9"/>
 </radialGradient>
@@ -49,15 +46,8 @@ To make a gradient for a new accent: stop 0 = accent mixed ~75% toward white, 0.
 toward white, 0.8 = the accent, 1 = accent ~8% darker. Orange example:
 `#FFDCC2 / #FFAA72 / #FF8A3D / #F27828`.
 
-Sizes (radius, all tunable): queued event 16, moving dot 11 (+8 glow halo at 0.22 opacity),
-received dot 13, state disc 18, delivery-order dot 15. A dot may carry a single mono letter
-in `#0E100F` (e.g. the receiver's name in the delivery-order row) — never a word.
-
-States on a dot:
-- waiting / paused: opacity 0.4
-- progress: small pips (r 3.5) under the dot, one per receiver, dimming to 0.15 as delivered
-- wrong: pink ring (r + 6, stroke 2) and a bold pink "!" to the right
-- special actor: dashed pink ring (`stroke-dasharray 4 3`) around the dot
+Start with a dot radius of 13, a glow halo 8 units larger at 0.22 opacity, and
+opacity 0.4 for a waiting dot. Use the same size and colour as it moves between cards.
 
 ## Frame layout
 
@@ -65,17 +55,13 @@ States on a dot:
   `.stage` panel with a 16px radius. Lay out on round numbers; keep a 48px outer margin.
 - Components are cards: `fill surface, stroke line, stroke-width 2, rx 16`; title 17px/600 in
   `--mut` at 24px inner padding; section labels 12px uppercase, letter-spacing .06em, `--dim`.
-- Slots/queues inside a card: dashed rect (`#fffce105` fill, `#fffce110` stroke, dash 4 4, rx 8).
 - Forward wires: straight for aligned cards, or smooth cubic Béziers for fan-out.
-- Feedback / return paths: orthogonal segments with 16px rounded corners, dashed
-  (`5 6`, `#3d3f38`), highlighted in the actor colour while used.
+- Feedback or return paths: orthogonal segments with 16-unit rounded corners and
+  dashes (`5 6`).
 - Place the shaft and open arrowhead in the same SVG group so both inherit its stroke
   and fade together. Use round caps and joins on the head. Apply any dash pattern to
   the shaft. Allow 2 SVG units of clearance from the visible card stroke at each end,
   including the arrow tip's stroke width. Rotate the head to the path's end tangent.
-- Evidence areas: a "RECEIVED" column of dots inside each receiver card, and a global
-  "DELIVERY ORDER" row of numbered dots along the bottom. These make the verdict
-  self-evident without reading text.
 - Use a 1280 × 720 frame with 32px padding. Place the diagram on the left and the step
   list on the right. Keep that arrangement in normal playback, video preview and export.
   At narrow widths, shrink the whole 16:9 frame uniformly.
@@ -96,13 +82,3 @@ States on a dot:
   and the tuning panel. This area can reflow on narrow screens.
 - Type: system sans for text, `ui-monospace` for values and code labels. Use concise
   English labels by default, with the user-requested language when specified.
-
-## Things the user rejected along the way (don't reintroduce)
-
-- Text-label chips as moving items (colour dots read faster).
-- One event duplicated per receiver (one event dot with progress pips is clearer).
-- Big arcs for feedback paths (use straight lines with rounded corners).
-- Busy, colourful frames (the frame stays monochrome).
-- Everything happening at once (one change per step, with a pause between steps).
-- A video layout assembled by the renderer that differs from the page (the frame in the
-  page is the video).
