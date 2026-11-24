@@ -1,8 +1,8 @@
 # fluid-skill
 
-FluidGroup's six skills for coding, native Apple UI design, maintainability and
-animated sequence visualizations, distributed as one plugin. Install the plugin
-or select individual skills.
+FluidGroup's seven skills cover coding, native Apple UI design, maintainability,
+animated sequence visualizations and reuse of FluidGroup and VergeGroup packages.
+Install the plugin or select individual skills.
 
 | Skill | When to use it |
 | --- | --- |
@@ -12,6 +12,7 @@ or select individual skills.
 | [ui-design](plugins/fluid-skill/skills/ui-design/SKILL.md) | Design native Apple interfaces and compare legal layouts on a fixed grid. |
 | [long-term-maintainability](plugins/fluid-skill/skills/long-term-maintainability/SKILL.md) | Review what a change makes easier or harder to maintain. |
 | [sequence-visualization](plugins/fluid-skill/skills/sequence-visualization/SKILL.md) | Animate how events and state move between components, step by step, and export video. |
+| [fluid-libraries](plugins/fluid-skill/skills/fluid-libraries/SKILL.md) | Use an existing FluidGroup or VergeGroup package before building a feature from scratch. |
 
 ## Install
 
@@ -29,7 +30,7 @@ codex plugin marketplace add "$PWD"
 codex plugin add fluid-skill@fluid-skill
 ```
 
-**Skills CLI** — install all six, or omit `--skill '*'` to choose:
+**Skills CLI** — install all seven, or omit `--skill '*'` to choose:
 
 ```sh
 npx skills add FluidGroup/fluid-skill --skill '*'

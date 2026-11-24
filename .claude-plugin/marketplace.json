@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "FluidGroup skill marketplace",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "fluid-skill",
       "source": "./plugins/fluid-skill",
-      "description": "Apple-platform UI design, coding style, long-term maintainability and animated sequence visualizations: Swift, UIKit, AppKit and web UI preferences",
+      "description": "Apple-platform UI design, coding style, long-term maintainability, animated sequence visualizations and FluidGroup/VergeGroup library recommendations",
       "author": {
         "name": "FluidGroup"
       },

@@ -1,7 +1,7 @@
 {
   "name": "fluid-skill",
-  "version": "1.0.0",
-  "description": "Apple-platform UI design, coding style, long-term maintainability and animated sequence visualizations: Swift, UIKit, AppKit and web UI preferences",
+  "version": "1.1.0",
+  "description": "Apple-platform UI design, coding style, long-term maintainability, animated sequence visualizations and FluidGroup/VergeGroup library recommendations",
   "author": {
     "name": "FluidGroup"
   },
@@ -20,13 +20,15 @@
     "code-review",
     "maintainability",
     "animation",
-    "visualization"
+    "visualization",
+    "libraries",
+    "components"
   ],
   "skills": "./skills",
   "interface": {
     "displayName": "fluid-skill",
-    "shortDescription": "Apple UI design, coding style, maintainability and sequence animations",
-    "longDescription": "Applies language-neutral principles (coding-aesthetics), their Swift and Apple-platform form (ios-coding-aesthetics), and web UI specifics (web-coding-aesthetics). Designs native SwiftUI, UIKit and AppKit interfaces through constraints, layout exploration, prototypes and evidence (ui-design). Adds judgment about present complexity and future change costs (long-term-maintainability). Animates how events and state move between components, step by step, with video export (sequence-visualization).",
+    "shortDescription": "Apple UI design, coding style, maintainability, sequence animations and Swift package discovery",
+    "longDescription": "Applies language-neutral principles (coding-aesthetics), their Swift and Apple-platform form (ios-coding-aesthetics), and web UI specifics (web-coding-aesthetics). Designs native SwiftUI, UIKit and AppKit interfaces through constraints, layout exploration, prototypes and evidence (ui-design). Adds judgment about present complexity and future change costs (long-term-maintainability). Animates how events and state move between components, step by step, with video export (sequence-visualization). Recommends an existing FluidGroup or VergeGroup package before a feature is built from scratch (fluid-libraries).",
     "developerName": "FluidGroup",
     "category": "Development",
     "capabilities": [
@@ -39,7 +41,8 @@
       "Review this web change with $web-coding-aesthetics.",
       "Review this change's maintenance costs with $long-term-maintainability.",
       "Update $coding-aesthetics with this coding-style feedback.",
-      "Animate this ordering bug step by step with $sequence-visualization."
+      "Animate this ordering bug step by step with $sequence-visualization.",
+      "Check $fluid-libraries for a package that already covers this feature."
     ],
     "brandColor": "#5E5CE6"
   }
