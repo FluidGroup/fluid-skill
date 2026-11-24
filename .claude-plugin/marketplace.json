@@ -11,7 +11,7 @@
     {
       "name": "fluid-skill",
       "source": "./plugins/fluid-skill",
-      "description": "Apple-platform UI design, coding style, long-term maintainability and FluidGroup/VergeGroup library recommendations: Swift, UIKit, AppKit and web UI preferences",
+      "description": "Apple-platform UI design, coding style, long-term maintainability, animated sequence visualizations and FluidGroup/VergeGroup library recommendations",
       "author": {
         "name": "FluidGroup"
       },
@@ -28,7 +28,9 @@
         "web",
         "api-design",
         "code-review",
-        "maintainability"
+        "maintainability",
+        "animation",
+        "visualization"
       ]
     }
   ]

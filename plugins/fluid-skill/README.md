@@ -1,10 +1,8 @@
 # fluid-skill
 
-Apple UI design, coding style and long-term maintainability in one plugin:
-principles that hold in any language, their Swift and Apple-platform form,
-web UI specifics, native interface design and judgment about the cost of
-evolving software. One install brings all six skills; each activates when
-the task needs it.
+One plugin brings together coding style, Apple UI design, long-term
+maintainability, animated sequence visualizations and FluidGroup and VergeGroup
+package recommendations. Each of the seven skills activates when the task needs it.
 
 ## Skills
 
@@ -15,6 +13,7 @@ the task needs it.
 | `web-coding-aesthetics` | Web UI: components and catalogs, CSS, loading, accessible controls and client/server boundaries |
 | `ui-design` | Apple UI: composition, visual direction, native navigation, constraints, exploration, prototypes and design evidence |
 | `long-term-maintainability` | Design, implementation, and review: balance present complexity against the cost of changing decisions later |
+| `sequence-visualization` | Step-by-step GSAP + SVG animations of events and state moving between components, with a tuning panel and MP4 export |
 | `fluid-libraries` | App features: when to adopt an existing FluidGroup or VergeGroup package instead of building from scratch |
 
 The domain skills build on `coding-aesthetics` and tell the agent to apply it
@@ -85,6 +84,11 @@ output is not iOS Simulator or runtime accessibility evidence.
 
 `long-term-maintainability` holds the judgment procedure in `SKILL.md` and
 synthetic contrasting cases in `references/contrasting-cases.md`.
+
+`sequence-visualization` holds the workflow, video-frame contract and design
+summary in `SKILL.md`; `references/design.md`, `timeline.md`, `tuning.md` and
+`video.md`; a complete example page in `assets/example.html`; and the
+frame-by-frame MP4 renderer (with optional motion blur) in `scripts/render.mjs`.
 
 `fluid-libraries` holds the decision procedure and a need-to-package table in
 `SKILL.md`, with the product, entry point, floor and caveats of each package in

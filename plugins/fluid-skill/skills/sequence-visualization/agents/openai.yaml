@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sequence Visualization"
+  short_description: "Step-by-step GSAP + SVG animations of event and state flow, with video export"
+  default_prompt: "Use $sequence-visualization to animate how this behaves step by step."

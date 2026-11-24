@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fluid-skill",
   "version": "1.1.0",
-  "description": "Apple-platform UI design, coding style, long-term maintainability and FluidGroup/VergeGroup library recommendations: Swift, UIKit, AppKit and web UI preferences",
+  "description": "Apple-platform UI design, coding style, long-term maintainability, animated sequence visualizations and FluidGroup/VergeGroup library recommendations",
   "author": {
     "name": "FluidGroup"
   },
@@ -20,6 +20,8 @@
     "api-design",
     "code-review",
     "maintainability",
+    "animation",
+    "visualization",
     "libraries",
     "components"
   ]

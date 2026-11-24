@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequence example</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{
+  --bg:#0E100F; --surface:#151716; --raised:#1C1F1D; --line:#fffce114; --wire:#33362F;
+  --fg:#FFFCE1; --mut:#A3A291; --dim:#6B6B5E;
+  --green:#6EE36E; --blue:#4FB3E8; --lime:#B8F27C;
+  --sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* spacing: 4px scale only */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px; --s8:32px; --s12:48px;
+  /* corners: panels 16 with 8 inset -> items 8; controls 12 with 4 inset -> segments 8 */
+  --r-panel:16px; --r-control:12px; --r-item:8px; --r-key:4px;
+  --control-h:36px;
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:var(--s12)}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:var(--s6)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+
+/* Preview scales the 1280 × 720 composition. The renderer captures it at full size. */
+.frame-shell{position:relative;width:100%;aspect-ratio:16 / 9;overflow:hidden;outline:1px dashed #fffce130}
+.frame{position:absolute;inset:0;box-sizing:border-box;width:1280px;height:720px;padding:var(--s8);display:grid;grid-template-columns:minmax(0,1fr) 272px;gap:var(--s4);background:var(--bg);transform:scale(var(--frame-scale,1));transform-origin:top left}
+#exit-preview{display:none;position:fixed;right:var(--s4);bottom:var(--s4);z-index:70}
+.export body{padding:var(--s4)}
+.export .top,.export .main{display:none}
+.export #exit-preview{display:block}
+.export.render body{margin:0;padding:0}
+.export.render .frame-shell{width:1280px;outline:none}
+.export.render .frame{transform:none}
+.export.render #exit-preview{display:none}
+.bar{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s3);align-items:center}
+.seg{box-sizing:border-box;height:var(--control-h);display:inline-flex;padding:calc(var(--s1) - 1px);border:1px solid var(--line);border-radius:var(--r-control);background:var(--surface)}
+.seg button{font:600 13px var(--sans);color:var(--mut);background:none;border:0;border-radius:var(--r-item);padding:0 var(--s4);cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fffce114;color:var(--fg)}
+.btn{box-sizing:border-box;height:var(--control-h);font:600 13px var(--sans);color:var(--mut);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-control);padding:0 var(--s3);cursor:pointer;min-width:var(--control-h)}
+#play{min-width:80px}
+.btn:hover,.seg button:hover{color:var(--fg)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.scrub{flex:1 1 200px;min-width:0;display:flex;align-items:center;gap:var(--s3)}
+.scrub input{flex:1;min-width:0;accent-color:var(--green)}
+.time{font:12px var(--mono);color:var(--dim);font-variant-numeric:tabular-nums;min-width:4.5em;text-align:right}
+select{box-sizing:border-box;height:var(--control-h);font:600 13px var(--sans);color:var(--mut);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-control);padding:0 var(--s2)}
+
+.main{display:grid;grid-template-columns:minmax(0,1fr) 304px;gap:var(--s4);align-items:start}
+.side{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.stage{display:grid;place-items:center;min-height:0;border:1px solid var(--line);border-radius:var(--r-panel);overflow:hidden;background:var(--bg)}
+.stage svg{display:block;width:100%;height:100%}
+
+.step-pane{display:flex;flex-direction:column;justify-content:center;min-height:0}
+.steps{position:relative;list-style:none;margin:0;padding:var(--s1);display:flex;flex-direction:column;gap:var(--s1);overflow:auto;scrollbar-width:none;overflow-anchor:none}
+.steps li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:6px minmax(0,1fr);gap:var(--s2);align-items:baseline;padding:var(--s2) var(--s3);border-radius:var(--r-item);cursor:pointer;font-size:15px;line-height:1.45;color:var(--mut)}
+.steps li button:hover{color:var(--fg)}
+.steps li button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);align-self:center}
+.steps li.active button{background:#fffce10d;color:var(--fg)}
+.steps li.active .step-dot{background:var(--green)}
+.hint{font-size:12px;color:var(--dim)}
+.hint kbd{font-family:var(--mono);border:1px solid var(--line);border-radius:var(--r-key);padding:0 var(--s1);color:var(--mut)}
+
+#tune .lil-gui.root{--width:100%;width:100%;--background-color:var(--surface);--text-color:var(--mut);--title-background-color:var(--raised);--title-text-color:var(--fg);--widget-color:var(--raised);--hover-color:#2a2d2a;--focus-color:#33362f;--number-color:var(--green);--string-color:var(--lime);--font-family:var(--sans);--font-size:12px;--input-font-size:12px;--padding:var(--s2);--widget-height:24px;border:1px solid var(--line);border-radius:var(--r-panel);overflow:hidden}
+#tune .lil-gui .slider .fill{background:var(--green)}
+/* SVG diagram */
+svg text{font-family:var(--sans)}
+.card{fill:var(--surface);stroke:var(--line);stroke-width:2}
+.wire{fill:none;stroke:var(--wire);stroke-width:2}
+.wire.highlight{stroke:var(--blue);stroke-width:2.5}
+.wire.return .shaft{stroke-dasharray:5 6}
+.ah{stroke-linecap:round;stroke-linejoin:round}
+.node-label{font:600 24px var(--mono);fill:var(--mut)}
+.dot{fill:url(#dot-gradient);filter:url(#grain)}
+.glow{fill:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="eyebrow">Sequence example</div>
+    <button class="btn" id="preview" type="button">Preview video frame</button>
+  </div>
+
+  <div class="frame-shell">
+    <section class="frame" id="frame" aria-label="Video frame">
+      <div class="stage"><svg id="svg" viewBox="0 80 1080 470" role="img" aria-label="Sequence graph with nodes A, B and C"></svg></div>
+      <aside class="step-pane" aria-label="Sequence steps">
+        <ol class="steps" id="steps" role="list"></ol>
+      </aside>
+    </section>
+  </div>
+
+  <div class="main">
+    <div class="bar">
+      <div class="seg" role="group" aria-label="Scenario">
+        <button id="sc-direct" type="button" aria-pressed="true" data-k="direct">Direct</button>
+        <button id="sc-return" type="button" aria-pressed="false" data-k="return">With return</button>
+      </div>
+      <button class="btn" id="prev" type="button" aria-label="Previous step">◀</button>
+      <button class="btn" id="play" type="button">Play</button>
+      <button class="btn" id="next" type="button" aria-label="Next step">▶</button>
+      <div class="scrub">
+        <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Timeline position">
+        <span class="time" id="time">0.0s</span>
+      </div>
+      <select id="speed" aria-label="Speed">
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+      </select>
+    </div>
+
+    <div class="side">
+      <div id="tune"></div>
+      <textarea id="tune-json" hidden rows="8" readonly aria-label="Settings JSON" style="width:100%;box-sizing:border-box;background:var(--surface);color:var(--mut);border:1px solid var(--line);border-radius:var(--r-control);font:12px var(--mono);padding:var(--s3)"></textarea>
+      <div class="hint"><kbd>←</kbd> <kbd>→</kbd> step · <kbd>space</kbd> play / pause · click a step to jump. The dashed box is the video frame.</div>
+    </div>
+  </div>
+</div>
+<button class="btn" id="exit-preview" type="button">Exit preview · Esc</button>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MotionPathPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/GSDevTools.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/dist/lil-gui.umd.min.js"></script>
+<script>
+gsap.registerPlugin(MotionPathPlugin, GSDevTools);
+
+/* ---------- tuning ---------- */
+const DEFAULTS = {
+  travel: 0.9, gap: 0.45, fade: 0.2, pop: 0.3,
+  ease: 'power2.inOut', popEase: 'power2.out',
+  dotSize: 13, pausedOpacity: 0.4, glow: 0.22, grain: 0.16,
+  devtools: false,
+};
+const C = {...DEFAULTS};
+const settingsKey = 'sequence-example-tuning';
+try { Object.assign(C, JSON.parse(localStorage.getItem(settingsKey) || '{}')); } catch {}
+function saveConfig() { try { localStorage.setItem(settingsKey, JSON.stringify(C)); } catch {} }
+
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('svg');
+
+const NODES = {A: [185, 290], B: [543, 290], C: [901, 396]};
+// The path endpoints leave 2 SVG units between the visible wires and card strokes.
+const EDGES = {
+  AB: {from: 'A', to: 'B', start: [301, 290], path: 'H427', end: [427, 290, 0]},
+  BC: {from: 'B', to: 'C', start: [659, 290], path: 'C717 290 727 396 785 396', end: [785, 396, 0]},
+  BA: {from: 'B', to: 'A', start: [543, 237], path: 'V192 Q543 176 527 176 H201 Q185 176 185 192 V237', end: [185, 237, 90], return: true},
+};
+
+const opening = [
+  {text: 'Start at A'},
+  {text: 'Move A → B', edge: 'AB'},
+];
+const finish = {text: 'Move B → C', edge: 'BC'};
+const SCENARIOS = {
+  direct: {steps: [...opening, finish]},
+  return: {steps: [
+    ...opening,
+    {text: 'Wait at B', wait: true},
+    {text: 'Return B → A', edge: 'BA'},
+    opening[1],
+    finish,
+  ]},
+};
+
+function el(tag, attrs, parent = svg) {
+  const element = document.createElementNS(NS, tag);
+  for (const [name, value] of Object.entries(attrs)) element.setAttribute(name, value);
+  parent.appendChild(element);
+  return element;
+}
+
+function arrow(edge, highlight) {
+  const cls = 'wire' + (edge.return ? ' return' : '') + (highlight ? ' highlight' : '');
+  const group = el('g', {class: cls, opacity: highlight ? 0 : 1});
+  el('path', {class: 'shaft', d: `M${edge.start.join(' ')} ${edge.path}`}, group);
+  const [x, y, angle] = edge.end;
+  el('path', {
+    class: 'ah', d: 'M-7 -6 L-1.25 0 L-7 6 M-11 0 H-1.25',
+    transform: 'translate(' + x + ' ' + y + ') rotate(' + angle + ')',
+  }, group);
+  return group;
+}
+
+let tl, starts = [], ends = [], steps = [], seekTween = null, speed = 1, scenario = 'direct';
+
+function build(key) {
+  stopSeek();
+  if (tl) tl.kill();
+  scenario = key;
+  steps = SCENARIOS[key].steps;
+  svg.innerHTML = `<defs>
+    <radialGradient id="dot-gradient" cx="0.5" cy="0.5" r="0.85" fx="0.38" fy="0.85">
+      <stop offset="0" stop-color="#D2ECFA"/><stop offset="0.3" stop-color="#8FCBEE"/>
+      <stop offset="0.8" stop-color="#4FB3E8"/><stop offset="1" stop-color="#3FA2D9"/>
+    </radialGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 ${C.grain} 0" result="w"/>
+      <feComposite in="w" in2="SourceGraphic" operator="in" result="wg"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="wg"/></feMerge>
+    </filter>
+  </defs>`;
+
+  const wires = {};
+  const routes = new Set(steps.flatMap(step => step.edge ? [step.edge] : []));
+  for (const name of routes) {
+    arrow(EDGES[name], false);
+    wires[name] = arrow(EDGES[name], true);
+  }
+  for (const [name, [x, y]] of Object.entries(NODES)) {
+    el('rect', {class: 'card', x: x - 113, y: y - 50, width: 226, height: 128, rx: 16});
+    el('text', {class: 'node-label', x, y: y + 45, 'text-anchor': 'middle'}).textContent = name;
+  }
+  const dot = el('g', {id: 'token', opacity: 0});
+  el('circle', {class: 'glow', r: C.dotSize + 8, opacity: C.glow}, dot);
+  el('circle', {class: 'dot', r: C.dotSize}, dot);
+  gsap.set(dot, {x: NODES.A[0], y: NODES.A[1]});
+
+  tl = gsap.timeline({paused: true, onUpdate: sync, defaults: {ease: C.ease}});
+  starts = [];
+  ends = [];
+  steps.forEach((step, i) => {
+    const start = tl.duration();
+    starts.push(start);
+    tl.addLabel('s' + i, start);
+
+    if (step.edge) {
+      const {from, to, start: port, path} = EDGES[step.edge];
+      const highlight = wires[step.edge];
+      // Extend the visible wire into the cards so the dot moves continuously.
+      const motion = `M${NODES[from].join(' ')} L${port.join(' ')} ${path} L${NODES[to].join(' ')}`;
+      const arrival = start + C.travel;
+      const fadeIn = Math.min(C.fade, C.travel);
+      tl.to(dot, {opacity: 1, duration: fadeIn}, start);
+      tl.to(highlight, {opacity: 0.9, duration: fadeIn}, start);
+      tl.to(dot, {motionPath: {path: motion}, duration: C.travel}, start);
+      tl.to(highlight, {opacity: 0, duration: C.fade}, arrival);
+    } else {
+      tl.to(dot, {opacity: step.wait ? C.pausedOpacity : 1, duration: C.pop, ease: C.popEase}, start);
+    }
+    ends.push(tl.duration());
+    tl.to({}, {duration: C.gap});
+  });
+
+  renderSteps();
+  sync();
+}
+
+/* ---------- UI ---------- */
+const playBtn = document.getElementById('play');
+const scrub = document.getElementById('scrub');
+const timeEl = document.getElementById('time');
+const stepsEl = document.getElementById('steps');
+
+function renderSteps() {
+  stepsEl.innerHTML = '';
+  delete stepsEl.dataset.active;
+  steps.forEach((s, i) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = '<span class="step-dot" aria-hidden="true"></span><span></span>';
+    b.lastChild.textContent = s.text;
+    b.addEventListener('click', () => goTo(i));
+    li.appendChild(b);
+    stepsEl.appendChild(li);
+  });
+}
+
+function activeStep() {
+  const t = tl.time();
+  let a = -1;
+  for (let i = 0; i < starts.length; i++) if (starts[i] < t - 1e-4) a = i;
+  return a;
+}
+function completedStep() {
+  const t = tl.time();
+  let c = -1;
+  for (let i = 0; i < ends.length; i++) if (ends[i] <= t + 1e-3) c = i;
+  return c;
+}
+
+function sync() {
+  const a = activeStep();
+  scrub.value = Math.round(tl.progress() * 1000);
+  timeEl.textContent = tl.time().toFixed(1) + 's';
+  if (stepsEl.dataset.active !== String(a)) {
+    stepsEl.dataset.active = a;
+    [...stepsEl.children].forEach((li, i) => {
+      li.classList.toggle('active', i === a);
+      if (i === a) li.firstChild.setAttribute('aria-current', 'step');
+      else li.firstChild.removeAttribute('aria-current');
+    });
+    const row = stepsEl.children[a];
+    stepsEl.scrollTop = row ? row.offsetTop + (row.offsetHeight - stepsEl.clientHeight) / 2 : 0;
+  }
+  const playing = tl.isActive() || (seekTween && seekTween.isActive());
+  playBtn.textContent = playing ? 'Pause' : (tl.progress() >= 1 ? 'Replay' : 'Play');
+}
+
+function stopSeek() { if (seekTween) { seekTween.kill(); seekTween = null; } }
+function goTo(i) {
+  stopSeek(); tl.pause();
+  const target = i < 0 ? 0 : ends[i];
+  if (target < tl.time()) { tl.seek(i < 0 ? 0 : starts[i]); }
+  seekTween = tl.tweenTo(target, {onUpdate: sync, onComplete: sync});
+  seekTween.timeScale(speed);
+}
+
+playBtn.addEventListener('click', () => {
+  const playing = tl.isActive() || (seekTween && seekTween.isActive());
+  stopSeek();
+  if (playing) { tl.pause(); }
+  else if (tl.progress() >= 1) { tl.restart(); }
+  else { tl.play(); }
+  sync();
+});
+document.getElementById('next').addEventListener('click', () => {
+  const c = completedStep();
+  if (c < steps.length - 1) goTo(c + 1);
+});
+document.getElementById('prev').addEventListener('click', () => {
+  stopSeek(); tl.pause();
+  const c = completedStep();
+  const a = activeStep();
+  // if mid-step, go back to the end of the previous step; otherwise one more step back
+  const target = a > c ? c : c - 1;
+  tl.seek(target < 0 ? 0 : ends[target]);
+  sync();
+});
+scrub.addEventListener('input', () => { stopSeek(); tl.pause(); tl.progress(scrub.value / 1000); sync(); });
+document.getElementById('speed').addEventListener('change', e => {
+  speed = +e.target.value; tl.timeScale(speed); if (seekTween) seekTween.timeScale(speed);
+});
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  build(b.dataset.k); tl.timeScale(speed); attachDevtools();
+}));
+const root = document.documentElement;
+document.getElementById('preview').addEventListener('click', () => root.classList.add('export'));
+document.getElementById('exit-preview').addEventListener('click', () => root.classList.remove('export'));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && root.classList.contains('export')) { root.classList.remove('export'); return; }
+  if (e.target.closest('input,select,textarea') || (e.key === ' ' && e.target.closest('button'))) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('next').click(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById('prev').click(); }
+  if (e.key === ' ') { e.preventDefault(); playBtn.click(); }
+});
+
+let dev = null;
+function attachDevtools() {
+  if (dev) { dev.kill(); dev = null; }
+  document.body.style.paddingBottom = C.devtools ? '96px' : '';
+  if (C.devtools) dev = GSDevTools.create({animation: tl, globalSync: false, persist: false, paused: true, css: {zIndex: 60}});
+}
+function rebuild() {
+  const p = tl ? tl.progress() : 1;
+  build(scenario); tl.timeScale(speed); tl.progress(p); sync();
+  attachDevtools(); saveConfig();
+}
+const gui = new lil.GUI({container: document.getElementById('tune'), title: 'Tuning'});
+const ft = gui.addFolder('Timing (seconds)');
+ft.add(C, 'travel', 0.2, 3, 0.05).name('dot travel');
+ft.add(C, 'gap', 0, 2, 0.05).name('pause between steps');
+ft.add(C, 'fade', 0.05, 0.6, 0.05).name('wire fade');
+ft.add(C, 'pop', 0.1, 1, 0.05).name('marker transition');
+const fe = gui.addFolder('Easing');
+const EASES = ['none', 'power1.inOut', 'power2.inOut', 'power3.inOut', 'power4.inOut', 'sine.inOut', 'expo.inOut', 'circ.inOut', 'back.inOut(1.4)'];
+fe.add(C, 'ease', EASES).name('dot travel');
+fe.add(C, 'popEase', ['power2.out', 'sine.inOut', 'none']).name('marker transition');
+const fl = gui.addFolder('Look');
+fl.add(C, 'dotSize', 6, 24, 1).name('dot radius');
+fl.add(C, 'pausedOpacity', 0.1, 1, 0.05).name('paused opacity');
+fl.add(C, 'glow', 0, 0.6, 0.02).name('glow');
+fl.add(C, 'grain', 0, 0.5, 0.02).name('grain');
+gui.add(C, 'devtools').name('GSDevTools panel');
+gui.add({copy() {
+  const json = JSON.stringify(C, null, 2);
+  const done = () => { copyCtl.name('Copied'); setTimeout(() => copyCtl.name('Copy settings as JSON'), 1500); };
+  const fallback = () => { const t = document.getElementById('tune-json'); t.hidden = false; t.value = json; t.focus(); t.select(); copyCtl.name('Select and copy the text below'); };
+  try { navigator.clipboard.writeText(json).then(done, fallback); } catch (e) { fallback(); }
+}}, 'copy').name('Copy settings as JSON');
+const copyCtl = gui.controllers[gui.controllers.length - 1];
+gui.add({reset() { Object.assign(C, DEFAULTS); gui.controllersRecursive().forEach(c => c.updateDisplay()); rebuild(); }}, 'reset').name('Reset to defaults');
+gui.onFinishChange(rebuild);
+
+const shell = document.querySelector('.frame-shell');
+const frame = document.getElementById('frame');
+function fitFrame() {
+  shell.style.setProperty('--frame-scale', shell.getBoundingClientRect().width / frame.offsetWidth);
+}
+fitFrame();
+new ResizeObserver(fitFrame).observe(shell);
+
+build('direct');
+attachDevtools();
+// Sync the player when the timeline is scrubbed through GSDevTools.
+let lastT = -1;
+gsap.ticker.add(() => { if (tl && tl.time() !== lastT) { lastT = tl.time(); sync(); } });
+// Open with the last step visible.
+tl.progress(1); sync();
+</script>
+</body>
+</html>
