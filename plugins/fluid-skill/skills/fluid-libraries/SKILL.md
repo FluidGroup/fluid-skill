@@ -63,9 +63,13 @@ A package fits when all of these hold:
 - The need is more than a few lines. For a ten-line helper (a rubber-band
   formula, a hex initializer), copying it under
   `// from <project> <URL>` is lighter than a dependency, unless the project
-  already has the package. Read the source's license first and carry what it
-  requires (Apache-2.0 packages such as `swift-rubber-banding` need the
-  license and `NOTICE` text kept with the copy).
+  already has the package. Verify which license applies to the source revision
+  and retain the required notices. For `swift-rubber-banding` 1.0.0, the tag
+  predates the license files. The upstream README confirms that Apache-2.0
+  applies to that release. Retain the license and attribution with the copy.
+  [Upstream README](https://github.com/FluidGroup/swift-rubber-banding#license) ·
+  [LICENSE](https://github.com/FluidGroup/swift-rubber-banding/blob/main/LICENSE) ·
+  [NOTICE](https://github.com/FluidGroup/swift-rubber-banding/blob/main/NOTICE)
 
 ## The Catalog
 
