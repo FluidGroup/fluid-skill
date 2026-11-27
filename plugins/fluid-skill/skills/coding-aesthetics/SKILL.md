@@ -37,6 +37,21 @@ domain skill together with this one.
 - The project's own names, paths, and product requirements never become
   general rules; examples here are synthetic.
 
+## Question the Premise
+
+- Treat requested patches, inherited plans, and your own earlier plans as
+  hypotheses, not proof that their premises are sound. State the actual
+  requirements and inspect the responsible component, its callers, and
+  contracts.
+- Ask what design would best serve the component if built afresh under those
+  requirements. Compare it with the current plan; revisit that comparison when
+  new evidence changes a premise instead of layering steps or exceptions onto
+  the prior plan.
+- Prefer bounded redesign only when evidence warrants it; otherwise explain why
+  a local change fits. Preserve required behavior and compatibility, keep
+  unrelated cleanup out, and follow an explicitly required mechanism unless it
+  conflicts with correctness or a contract that needs clarification.
+
 ## What to Avoid
 
 ### 1. Structure Before Need
