@@ -1,0 +1,4 @@
+interface:
+  display_name: "FluidSkill: UI Design"
+  short_description: "Design native Apple interfaces in SwiftUI, UIKit, and AppKit"
+  default_prompt: "Use $ui-design to design this Apple-platform screen."
