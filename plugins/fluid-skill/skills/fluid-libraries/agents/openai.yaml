@@ -1,4 +1,4 @@
 interface:
-  display_name: "FluidGroup & VergeGroup Libraries"
+  display_name: "FluidSkill: FluidGroup & VergeGroup Libraries"
   short_description: "Use an existing package before building a component from scratch"
   default_prompt: "Use $fluid-libraries to check whether a FluidGroup or VergeGroup package already covers this feature before implementing it."

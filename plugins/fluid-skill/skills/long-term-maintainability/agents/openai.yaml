@@ -1,4 +1,4 @@
 interface:
-  display_name: "Long-Term Maintainability"
+  display_name: "FluidSkill: Long-Term Maintainability"
   short_description: "Balance present simplicity with the cost of future changes"
   default_prompt: "Use $long-term-maintainability to judge this change's maintenance costs and recommend what to keep, adjust now, or defer."
